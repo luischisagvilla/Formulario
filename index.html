@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Encuesta Turística - Volcán Cotopaxi</title>
+    </head>
+    <body>
+        <h2>Encuesta de Satisfacción - Parque Nacional Cotopaxi</h2>
+        <form action="procesar_encuesta.php"">
+            
+            <!-- 1. Caja de texto corta (Text) -->
+            <label for="pregunta1">1. ¿De qué ciudad o país nos visitas?</label><br>
+            <input type="text" id="pregunta1" name="ciudad_pais" placeholder="Latacunga"><br><br>
+            <!-- 2. Botones de radio (Radio) -->
+            <label>2. ¿Es la primera vez que visitas el Parque Nacional Cotopaxi?</label><br>
+            <input type="radio" id="si" name="primera_vez" value="si">
+            <label for="si">Sí, es mi primera vez</label><br>
+            <input type="radio" id="no" name="primera_vez" value="no">
+            <label for="no">No, ya lo he visitado antes</label><br><br>
+            <!-- 3. Casillas de verificación (Checkbox) -->
+            <label>3. ¿Qué actividades principales realizaste durante tu visita? (Puedes marcar varias)</label><br>
+            <input type="checkbox" id="check1" name="actividades[]" value="senderismo">
+            <label for="check1">Senderismo / Caminata hacia el refugio</label><br>
+            <input type="checkbox" id="check2" name="actividades[]" value="laguna">
+            <label for="check2">Visita a la Laguna de Limpiopungo</label><br>
+            <input type="checkbox" id="check3" name="actividades[]" value="ciclismo">
+            <label for="check3">Ciclismo de montaña</label><br>
+            <input type="checkbox" id="check4" name="actividades[]" value="fotografia">
+            <label for="check4">Fotografía de paisajes y fauna</label><br><br>
+            <!-- 4. Caja de texto larga (Textarea) -->
+            <label for="comentarios">4. ¿Tienes algún comentario, queja o sugerencia adicional?</label><br>
+            <textarea id="comentarios" name="comentarios" rows="4" cols="40" placeholder="Escribe aquí"></textarea><br><br>
+            <!-- 5. Menú desplegable (Select) -->
+            <label for="rango_edad">5. ¿En qué rango de edad te encuentras?</label><br>
+            <select id="rango_edad" name="rango_edad">
+                <option value="" disabled selected>Selecciona una opción</option>
+                <option value="menor">Menos de 18 años</option>
+                <option value="joven">18 a 25 años</option>
+                <option value="adulto">26 a 40 años</option>
+                <option value="mayor">41 a 60 años</option>
+                <option value="anciano">Más de 60 años</option>
+            </select><br><br>
+            <!-- 6. Barra deslizante (Range) -->
+            <label for="recomendacion">6. ¿Qué tan probable es que recomiendes este lugar? (0 = Nada probable, 10 = Muy probable)</label><br>
+            0 <input type="range" id="recomendacion" name="recomendacion" min="0" max="10" value="5"> 10<br><br>
+            <!-- 7. Calificación (Rating por puntos / Radio estilizado) -->
+            <label>7. ¿Cómo calificarías la limpieza y el mantenimiento? (1 = Malo, 5 = Excelente)</label><br>
+            <input type="radio" id="p1" name="rating" value="1">
+            <label for="p1">1</label>
+            <input type="radio" id="p2" name="rating" value="2">
+            <label for="p2">2</label>
+            <input type="radio" id="p3" name="rating" value="3">
+            <label for="p3">3</label>
+            <input type="radio" id="p4" name="rating" value="4">
+            <label for="p4">4</label>
+            <input type="radio" id="p5" name="rating" value="5">
+            <label for="p5">5</label><br><br>
+            <!-- 8. Selector de fecha (Date) -->
+            <label for="fecha_visita">8. ¿En qué fecha exacta realizaste tu ingreso al parque?</label><br>
+            <input type="date" id="fecha_visita" name="fecha_visita"><br><br>
+            <!-- 9. Selector de hora (Time) -->
+            <label for="hora_ingreso">9. ¿A qué hora aproximada ingresaste al área?</label><br>
+            <input type="time" id="hora_ingreso" name="hora_ingreso"><br><br>
+            <!-- 10. Carga de archivos (File) -->
+            <label for="foto_visita">10. ¿Deseas compartir una fotografía de tu visita?</label><br>
+            <input type="file" id="foto_visita" name="foto_visita"><br><br>
+            
+            <!-- Botón de Enviar -->
+            <input type="submit" value="Enviar Encuesta">
+
+        </form>
+    </body>
+</html>
