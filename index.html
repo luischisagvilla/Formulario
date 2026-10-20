@@ -1,244 +1,429 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Encuesta</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
-  </head>
+    <title>Encuesta Turística - Volcán Cotopaxi</title>
+    <style>
+        :root {
+            --fondo: #eef6f9;
+            --tarjeta: #ffffff;
+            --cielo: #d9ecf5;
+            --menta: #dff1e7;
+            --azul: #2f6f95;
+            --azul-oscuro: #1f4d69;
+            --verde: #4a8c6a;
+            --sol: #f5c15a;
+            --texto: #26363f;
+            --borde: #c9dde7;
+        }
 
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--texto);
+            background: linear-gradient(180deg, var(--cielo) 0, var(--fondo) 420px, var(--fondo) 100%);
+            background-attachment: fixed;
+        }
+
+        /* ---------- Encabezado ---------- */
+        header {
+            text-align: center;
+            padding: 2.2rem 1rem 1.4rem;
+        }
+        header h2 {
+            margin: 0;
+            font-size: clamp(1.5rem, 4vw, 2.3rem);
+            color: var(--azul-oscuro);
+            letter-spacing: .01em;
+        }
+        header p {
+            margin: .4rem auto 0;
+            max-width: 46ch;
+            color: #4b6575;
+        }
+
+        /* ---------- Carrusel (solo CSS) ---------- */
+        .carrusel {
+            position: relative;
+            width: min(92%, 860px);
+            margin: 0 auto 2.2rem;
+            border-radius: 18px;
+            overflow: hidden;
+            background: var(--tarjeta);
+            border: 6px solid var(--tarjeta);
+            box-shadow: 0 8px 24px rgba(47, 111, 149, .18);
+        }
+        .carrusel > input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .pista {
+            display: flex;
+            width: 300%;
+            transition: transform .6s ease;
+        }
+        .slide {
+            position: relative;
+            width: 100%;
+            margin: 0;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, var(--cielo), var(--menta));
+        }
+        .slide img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slide figcaption {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            padding: 1.6rem 1rem .9rem;
+            color: #fff;
+            font-size: .95rem;
+            background: linear-gradient(0deg, rgba(20, 50, 70, .55), transparent);
+        }
+
+        #s1:checked ~ .pista { transform: translateX(0); }
+        #s2:checked ~ .pista { transform: translateX(-33.3333%); }
+        #s3:checked ~ .pista { transform: translateX(-66.6666%); }
+
+        /* Flechas */
+        .flecha {
+            position: absolute;
+            top: 50%;
+            translate: 0 -50%;
+            width: 2.6rem;
+            height: 2.6rem;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .85);
+            color: var(--azul-oscuro);
+            font-size: 1.6rem;
+            line-height: 1;
+            cursor: pointer;
+            user-select: none;
+            transition: background .2s;
+        }
+        .flecha:hover { background: #fff; }
+        .flecha.ant { left: .7rem; }
+        .flecha.sig { right: .7rem; }
+        .flechas { display: none; }
+        #s1:checked ~ .flechas.f1,
+        #s2:checked ~ .flechas.f2,
+        #s3:checked ~ .flechas.f3 { display: block; }
+
+        /* Puntos */
+        .puntos {
+            position: absolute;
+            left: 0; right: 0;
+            bottom: .7rem;
+            display: flex;
+            justify-content: center;
+            gap: .5rem;
+        }
+        .puntos label {
+            width: .8rem;
+            height: .8rem;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .6);
+            border: 1px solid rgba(31, 77, 105, .35);
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+        #s1:checked ~ .puntos label[for="s1"],
+        #s2:checked ~ .puntos label[for="s2"],
+        #s3:checked ~ .puntos label[for="s3"] {
+            background: var(--sol);
+            transform: scale(1.25);
+        }
+        #s1:focus-visible ~ .puntos label[for="s1"],
+        #s2:focus-visible ~ .puntos label[for="s2"],
+        #s3:focus-visible ~ .puntos label[for="s3"] {
+            outline: 3px solid var(--azul);
+            outline-offset: 2px;
+        }
+
+        /* ---------- Formulario ---------- */
+        form {
+            width: min(92%, 720px);
+            margin: 0 auto 3rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .pregunta {
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-left: 6px solid var(--verde);
+            border-radius: 12px;
+            padding: 1.1rem 1.3rem;
+        }
+        .pregunta > label:first-child,
+        .pregunta > .titulo {
+            display: block;
+            margin-bottom: .6rem;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+        }
+        .opcion { display: block; margin: .25rem 0; }
+        .opcion label { cursor: pointer; }
+
+        input[type="radio"],
+        input[type="checkbox"],
+        input[type="range"] { accent-color: var(--verde); }
+        input[type="radio"],
+        input[type="checkbox"] {
+            width: 1.05rem;
+            height: 1.05rem;
+            margin-right: .4rem;
+            vertical-align: -2px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            padding: .6rem .75rem;
+            font: inherit;
+            color: var(--texto);
+            background: #f7fbfd;
+            border: 1.5px solid var(--borde);
+            border-radius: 8px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        textarea { resize: vertical; }
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: none;
+            border-color: var(--azul);
+            box-shadow: 0 0 0 3px rgba(47, 111, 149, .2);
+        }
+
+        .deslizador {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+        }
+        .deslizador input { flex: 1; }
+
+        /* Calificación en botones */
+        .calificacion { display: flex; gap: .5rem; flex-wrap: wrap; }
+        .calificacion input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .calificacion label {
+            min-width: 2.8rem;
+            padding: .45rem .8rem;
+            text-align: center;
+            border: 1.5px solid var(--borde);
+            border-radius: 999px;
+            background: #f7fbfd;
+            cursor: pointer;
+            transition: background .2s, border-color .2s;
+        }
+        .calificacion label:hover { background: var(--menta); }
+        .calificacion input:checked + label {
+            background: var(--verde);
+            border-color: var(--verde);
+            color: #fff;
+        }
+        .calificacion input:focus-visible + label {
+            outline: 3px solid var(--azul);
+            outline-offset: 2px;
+        }
+
+        input[type="submit"] {
+            justify-self: center;
+            padding: .8rem 2.4rem;
+            font: inherit;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+            background: var(--sol);
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(245, 193, 90, .5);
+            transition: transform .15s, box-shadow .15s;
+        }
+        input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 193, 90, .6);
+        }
+        input[type="submit"]:focus-visible {
+            outline: 3px solid var(--azul);
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pista, .puntos label, input[type="submit"] { transition: none; }
+        }
+    </style>
+</head>
 <body>
-    <!-- ENCABEZADO -->
-    <header class="p-3 mb-2 bg-inverse fg-contrast-inverse py-5">
-      <div class="container text-center">
-        <p class="text-uppercase text-info fw-semibold small mb-2"> Ecuador - Cotopaxi </p>
-        <h1 class="display-5 fw-bold mb-3"> Encuesta para visitantes </h1>
-        <p class="lead text-white-50 mb-0">Parque Nacional Cotopaxi. Su opinión es importante para nosotros.</p>
-      </div>
+
+    <header>
+        <h2>Encuesta de Satisfacción - Parque Nacional Cotopaxi</h2>
+        <p>Tu opinión nos ayuda a cuidar el parque y mejorar la experiencia de cada visitante.</p>
     </header>
 
-    <!-- CARRUSEL DE IMÁGENES -->
-    <section class="container my-5">
-        <div id="carouselCotopaxi" class="carousel carousel-overlay slide" data-bs-theme="dark" data-bs-ride="carousel">
-            <div class="carousel-inner rounded-5 shadow">
-                <div class="carousel-item active" data-bs-interval="4000">
-                    <img src="cotopaxi11.jpg" class="d-block w-100 rounded-5" alt="Paisaje del volcán Cotopaxi">
-                </div>
+    <!-- ===== CARRUSEL: reemplaza NOMBRE_IMAGEN_1/2/3 por el nombre de tus archivos ===== -->
+    <section class="carrusel" aria-label="Galería del Parque Nacional Cotopaxi">
+        <input type="radio" name="slide" id="s1" checked aria-label="Imagen 1">
+        <input type="radio" name="slide" id="s2" aria-label="Imagen 2">
+        <input type="radio" name="slide" id="s3" aria-label="Imagen 3">
 
-                <div class="carousel-item" data-bs-interval="4000">
-                    <img src="cotopaxi2.jpg" class="d-block w-100 rounded-5" alt="Naturaleza del Parque Nacional Cotopaxi">
-                </div>
+        <div class="pista">
+            <figure class="slide">
+                <img src="cotopaxi11.jpg" alt="Descripción de la imagen 1">
+                <figcaption>Parque nacional Cotopaxi</figcaption>
+            </figure>
+            <figure class="slide">
+                <img src="cotopaxi2.jpg" alt="Descripción de la imagen 2">
+                <figcaption>Volcan Cotopaxi</figcaption>
+            </figure>
+            <figure class="slide">
+                <img src="cotopaxi3.jpg" alt="Descripción de la imagen 3">
+                <figcaption>Ciclismo</figcaption>
+            </figure>
+        </div>
 
-                <div class="carousel-item" data-bs-interval="4000">
-                    <img src="cotopaxi3.jpg" class="d-block w-100 rounded-5" alt="Paisaje turístico de Cotopaxi">
-                </div>
+        <div class="flechas f1">
+            <label for="s3" class="flecha ant" aria-label="Imagen anterior">&#8249;</label>
+            <label for="s2" class="flecha sig" aria-label="Imagen siguiente">&#8250;</label>
+        </div>
+        <div class="flechas f2">
+            <label for="s1" class="flecha ant" aria-label="Imagen anterior">&#8249;</label>
+            <label for="s3" class="flecha sig" aria-label="Imagen siguiente">&#8250;</label>
+        </div>
+        <div class="flechas f3">
+            <label for="s2" class="flecha ant" aria-label="Imagen anterior">&#8249;</label>
+            <label for="s1" class="flecha sig" aria-label="Imagen siguiente">&#8250;</label>
+        </div>
 
-                <div class="carousel-item" data-bs-interval="4000">
-                    <img src="cotopaxi4.jpg" class="d-block w-100 rounded-5" alt="Paisaje turístico de Cotopaxi">
-                </div>
-            </div>
-
-            <div class="carousel-overlay-controls">
-
-                <button class="btn-icon btn-sm btn-subtle theme-secondary" type="button" data-bs-target="#carouselCotopaxi" data-bs-slide="prev">
-                    <span class="carousel-icon-prev"aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselCotopaxi" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Imagen 1"></button>
-                    <button type="button" data-bs-target="#carouselCotopaxi" data-bs-slide-to="1" aria-label="Imagen 2"></button>
-                    <button type="button" data-bs-target="#carouselCotopaxi" data-bs-slide-to="2" aria-label="Imagen 3"></button>
-                    <button type="button" data-bs-target="#carouselCotopaxi" data-bs-slide-to="3" aria-label="Imagen 4"></button>
-                </div>
-
-                <button class="btn-icon btn-sm btn-subtle theme-secondary" type="button" data-bs-target="#carouselCotopaxi" data-bs-slide="next">
-                    <span class="carousel-icon-next" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
-
-            </div>
+        <div class="puntos">
+            <label for="s1" title="Imagen 1"></label>
+            <label for="s2" title="Imagen 2"></label>
+            <label for="s3" title="Imagen 3"></label>
         </div>
     </section>
 
-    <!-- FORMULARIO -->
-    <main class="container pb-5">
-        <div class="row justify-content-center">
-            <div class="col-12 col-lg-9 col-xl-8">
+    <form action="procesar_encuesta.php" method="post" enctype="multipart/form-data">
 
-                <div class="card border-0 shadow rounded-5">
-                    <div class="card-body p-4 p-md-5">
+        <!-- 1. Caja de texto corta (Text) -->
+        <div class="pregunta">
+            <label for="pregunta1">1. ¿De qué ciudad o país nos visitas?</label>
+            <input type="text" id="pregunta1" name="ciudad_pais" placeholder="Latacunga">
+        </div>
 
-                        <div class="text-center mb-5">
-                            <h2 class="fw-bold text-dark"> Comparte tu experiencia </h2>
-                            <p class="text-secondary"> Ayúdanos a mejorar el turismo y la conservación del parque. </p>
-                        </div>
-
-                        <form action="procesar_encuesta.php" method="post" enctype="multipart/form-data">
-
-                            <!-- PREGUNTA 1 -->
-                            <div class="mb-4">
-                                <label for="pregunta1"class="form-label fw-semibold">1. ¿De qué ciudad o país nos visitas? </label>
-                                <input type="text" class="form-control" id="pregunta1" name="ciudad_pais"placeholder="Ej. Latacunga">
-                            </div>
-
-                            <!-- PREGUNTA 2 -->
-                            <fieldset class="mb-4">
-                                <legend class="form-label fw-semibold">2. ¿Es la primera vez que visitas el Parque Nacional Cotopaxi? </legend>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" id="si" name="primera_vez" value="si">
-                                    <label class="form-check-label" for="si"> Sí, es mi primera vez </label>
-                                </div>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="no" name="segunda_vez" value="no">
-                                    <label class="form-check-label" for="no"> No, ya lo he visitado antes </label>
-                                </div>
-                            </fieldset>
-
-                            <!-- PREGUNTA 3 -->
-                            <fieldset class="mb-4">
-                                <legend class="form-label fw-semibold"> 3. ¿Qué actividades realizaste durante tu visita? </legend>
-                                <p class="form-text"> Puedes seleccionar varias opciones. </p>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="check1" name="actividades[]" value="senderismo">
-                                    <label class="form-check-label" for="check1"> Senderismo / Caminata hacia el refugio </label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="check2" name="actividades[]" value="laguna">
-                                    <label class="form-check-label" for="check2"> Visita a la Laguna de Limpiopungo </label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="check3" name="actividades[]" value="ciclismo">
-                                    <label class="form-check-label" for="check3"> Ciclismo de montaña </label>
-                                </div>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="check4" name="actividades[]" value="fotografia">
-                                    <label class="form-check-label" for="check4"> Fotografía de paisajes y fauna </label>
-                                </div>
-                            </fieldset>
-
-                            <!-- PREGUNTA 4 -->
-                            <div class="mb-4">
-                                <label for="rango_edad" class="form-label fw-semibold"> 4. ¿En qué rango de edad te encuentras? </label>
-
-                                <select class="form-select" id="rango_edad" name="rango_edad">
-
-                                    <option value="" disabled selected> Selecciona una opción </option>
-
-                                    <option value="menor"> Menos de 18 años </option>
-                                    <option value="joven"> 18 a 25 años </option>
-                                    <option value="adulto"> 26 a 40 años </option>
-                                    <option value="mayor"> 41 a 60 años </option>
-                                    <option value="anciano"> Más de 60 años </option>
-                                </select>
-                            </div>
-
-                            <!-- PREGUNTA 5 -->
-                            <div class="mb-4">
-                                <label for="recomendacion" class="form-label fw-semibold"> 5. ¿Qué tan probable es que recomiendes este lugar? </label>
-
-                                <div class="d-flex justify-content-between text-secondary small mb-2">
-                                    <span>0 - Nada probable</span>
-                                    <span>10 - Muy probable</span>
-                                </div>
-
-                                <input type="range" class="form-range" id="recomendacion" name="recomendacion" min="0" max="10" value="5">
-
-                                <div class="d-flex justify-content-between small text-secondary">
-                                    <span>Mínimo</span>
-                                    <span>Máximo</span>
-                                </div>
-                            </div>
-
-                            <!-- PREGUNTA 6 -->
-                            <fieldset class="mb-4">
-                                <legend class="form-label fw-semibold"> 6. ¿Cómo calificarías la limpieza y el mantenimiento? </legend>
-
-                                <p class="form-text"> 1 = Malo · 5 = Excelente </p>
-
-                                <div class="d-flex flex-wrap gap-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="p1" name="rating" value="1">
-                                        <label class="form-check-label" for="p1">1</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="p2" name="rating" value="2">
-                                        <label class="form-check-label" for="p2">2</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="p3" name="rating" value="3">
-                                        <label class="form-check-label" for="p3">3</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="p4" name="rating" value="4">
-                                        <label class="form-check-label"for="p4">4</label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="p5" name="rating" value="5">
-                                        <label class="form-check-label" for="p5">5</label>
-                                    </div>
-                                </div>
-                            </fieldset>
-
-                            <!-- PREGUNTA 7 -->
-                            <div class="mb-4">
-                                <label for="fecha_visita" class="form-label fw-semibold"> 7. ¿En qué fecha ingresaste al parque? </label>
-                                <input type="date" class="form-control" id="fecha_visita" name="fecha_visita">
-                            </div>
-
-                            <!-- PREGUNTA 8 -->
-                            <div class="mb-4">
-                                <label for="hora_ingreso" class="form-label fw-semibold"> 8. ¿A qué hora aproximada ingresaste? </label>
-                                <input type="time" class="form-control" id="hora_ingreso" name="hora_ingreso">
-                            </div>
-
-                            <!-- PREGUNTA 9 -->
-                            <div class="mb-4">
-                                <label for="foto_visita" class="form-label fw-semibold"> 9. ¿Deseas compartir una fotografía de tu visita? </label>
-                                <input type="file" class="form-control" id="foto_visita" name="foto_visita" accept="image/*">
-
-                                <div class="form-text"> Selecciona una imagen de tu dispositivo. </div>
-                            </div>
-
-                            <!-- PREGUNTA 10 -->
-                            <div class="mb-5">
-                                <label for="comentarios" class="form-label fw-semibold"> 10. ¿Tienes algún comentario, queja o sugerencia adicional? </label>
-                                <textarea class="form-control" id="comentarios" name="comentarios" rows="4" placeholder="Escribe aquí tu opinión..."></textarea>
-                            </div>
-
-                            <!-- BOTONES -->
-                            <div class="d-grid gap-3">
-                                <button type="submit" class="btn-solid theme-primary btn-lg"> Enviar encuesta </button>
-                                <button type="reset" class="btn-outline-secondary btn-lg"> Limpiar formulario </button>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-
+        <!-- 2. Botones de radio (Radio) -->
+        <div class="pregunta">
+            <span class="titulo">2. ¿Es la primera vez que visitas el Parque Nacional Cotopaxi?</span>
+            <div class="opcion">
+                <input type="radio" id="si" name="primera_vez" value="si">
+                <label for="si">Sí, es mi primera vez</label>
+            </div>
+            <div class="opcion">
+                <input type="radio" id="no" name="primera_vez" value="no">
+                <label for="no">No, ya lo he visitado antes</label>
             </div>
         </div>
-    </main>
 
-    <!-- PIE DE PÁGINA -->
-    <footer class="p-3 mb-2 bg-inverse fg-contrast-inverse">
-        <div class="container text-center">
-            <p class="text-white fw-semibold mb-1"> Parque Nacional Cotopaxi </p>
-            <p class="small mb-0"> Gracias por compartir tu experiencia y ayudar a mejorar el turismo. </p>
+        <!-- 3. Casillas de verificación (Checkbox) -->
+        <div class="pregunta">
+            <span class="titulo">3. ¿Qué actividades principales realizaste durante tu visita? (Puedes marcar varias)</span>
+            <div class="opcion">
+                <input type="checkbox" id="check1" name="actividades[]" value="senderismo">
+                <label for="check1">Senderismo / Caminata hacia el refugio</label>
+            </div>
+            <div class="opcion">
+                <input type="checkbox" id="check2" name="actividades[]" value="laguna">
+                <label for="check2">Visita a la Laguna de Limpiopungo</label>
+            </div>
+            <div class="opcion">
+                <input type="checkbox" id="check3" name="actividades[]" value="ciclismo">
+                <label for="check3">Ciclismo de montaña</label>
+            </div>
+            <div class="opcion">
+                <input type="checkbox" id="check4" name="actividades[]" value="fotografia">
+                <label for="check4">Fotografía de paisajes y fauna</label>
+            </div>
         </div>
-    </footer>
 
-    <script type="module"src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js"integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL" crossorigin="anonymous"></script>
+        <!-- 4. Caja de texto larga (Textarea) -->
+        <div class="pregunta">
+            <label for="comentarios">4. ¿Tienes algún comentario, queja o sugerencia adicional?</label>
+            <textarea id="comentarios" name="comentarios" rows="4" placeholder="Escribe aquí"></textarea>
+        </div>
 
+        <!-- 5. Menú desplegable (Select) -->
+        <div class="pregunta">
+            <label for="rango_edad">5. ¿En qué rango de edad te encuentras?</label>
+            <select id="rango_edad" name="rango_edad">
+                <option value="" disabled selected>Selecciona una opción</option>
+                <option value="menor">Menos de 18 años</option>
+                <option value="joven">18 a 25 años</option>
+                <option value="adulto">26 a 40 años</option>
+                <option value="mayor">41 a 60 años</option>
+                <option value="anciano">Más de 60 años</option>
+            </select>
+        </div>
+
+        <!-- 6. Barra deslizante (Range) -->
+        <div class="pregunta">
+            <label for="recomendacion">6. ¿Qué tan probable es que recomiendes este lugar? (0 = Nada probable, 10 = Muy probable)</label>
+            <div class="deslizador">
+                <span>0</span>
+                <input type="range" id="recomendacion" name="recomendacion" min="0" max="10" value="5">
+                <span>10</span>
+            </div>
+        </div>
+
+        <!-- 7. Calificación (Rating por puntos / Radio estilizado) -->
+        <div class="pregunta">
+            <span class="titulo">7. ¿Cómo calificarías la limpieza y el mantenimiento? (1 = Malo, 5 = Excelente)</span>
+            <div class="calificacion">
+                <input type="radio" id="p1" name="rating" value="1"><label for="p1">1</label>
+                <input type="radio" id="p2" name="rating" value="2"><label for="p2">2</label>
+                <input type="radio" id="p3" name="rating" value="3"><label for="p3">3</label>
+                <input type="radio" id="p4" name="rating" value="4"><label for="p4">4</label>
+                <input type="radio" id="p5" name="rating" value="5"><label for="p5">5</label>
+            </div>
+        </div>
+
+        <!-- 8. Selector de fecha (Date) -->
+        <div class="pregunta">
+            <label for="fecha_visita">8. ¿En qué fecha exacta realizaste tu ingreso al parque?</label>
+            <input type="date" id="fecha_visita" name="fecha_visita">
+        </div>
+
+        <!-- 9. Selector de hora (Time) -->
+        <div class="pregunta">
+            <label for="hora_ingreso">9. ¿A qué hora aproximada ingresaste al área?</label>
+            <input type="time" id="hora_ingreso" name="hora_ingreso">
+        </div>
+
+        <!-- 10. Carga de archivos (File) -->
+        <div class="pregunta">
+            <label for="foto_visita">10. ¿Deseas compartir una fotografía de tu visita?</label>
+            <input type="file" id="foto_visita" name="foto_visita" accept="image/*">
+        </div>
+
+        <!-- Botón de Enviar -->
+        <input type="submit" value="Enviar encuesta">
+
+    </form>
 </body>
 </html>
